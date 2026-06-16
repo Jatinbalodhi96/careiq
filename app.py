@@ -42,7 +42,7 @@ if "travel_plan_data" not in st.session_state:
 def generate_travel_plan(facility_name, origin_district):
     current_time_str = "Tuesday, June 16, 2026, 10:15 AM" # Morning commute context
     try:
-        with open("genie_instructions/genie_space_travel_planner_instructions.md", "r") as f:
+        with open("genie_instructions/genie_space_travel_planner_instructions.txt", "r") as f:
             travel_prompt = f.read()
         
         user_content = f"""
@@ -518,7 +518,7 @@ with col_right:
                 try:
                     # Load system prompt instructions
                     try:
-                        with open("genie_instructions/genie_space_orchestrator_instructions.md", "r") as f:
+                        with open("genie_instructions/genie_space_orchestrator_instructions.txt", "r") as f:
                             system_prompt = f.read()
                     except Exception as sys_e:
                         system_prompt = "You are the Master Orchestrator Agent."
@@ -600,7 +600,7 @@ with col_right:
                     status_placeholder.markdown("\n".join(thinking_steps), unsafe_allow_html=True)
                     
                     try:
-                        with open("genie_instructions/genie_space_visual_orchestrator_instructions.md", "r") as f:
+                        with open("genie_instructions/genie_space_visual_orchestrator_instructions.txt", "r") as f:
                             vis_system_prompt = f.read()
                         
                         vis_response = openai_client.responses.create(

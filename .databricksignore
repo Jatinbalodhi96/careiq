@@ -1,0 +1,8 @@
+facilties.csv
+*.docx
+__pycache__/
+.DS_Store
+raw_response.md
+databricks_catalog.md
+README.md
+nfhs_5_district_health_indicators.csv

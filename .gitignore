@@ -16,3 +16,4 @@ __pycache__/
 # Docs
 *.docx
 raw_response.md
+.claude/
