@@ -4,7 +4,7 @@ This document details the system architecture of **CareIQ — AI-Powered Care Ga
 
 ## System Architecture Concept Illustration
 
-![CareIQ System Architecture Illustration](/Users/jatinbalodhi/.gemini/antigravity-ide/brain/7d21f2fc-cefe-4748-b79b-3381efc0eeb3/careiq_system_architecture_1781635173199.png)
+![CareIQ System Architecture Illustration](./careiq_system_architecture.png)
 
 ## Simplified Left-to-Right Architecture Flow (Mermaid)
 
