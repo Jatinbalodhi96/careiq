@@ -40,6 +40,8 @@ if "travel_plan_data" not in st.session_state:
     st.session_state.travel_plan_data = None
 if "trigger_planner" not in st.session_state:
     st.session_state.trigger_planner = False
+if "planner_response" not in st.session_state:
+    st.session_state.planner_response = None
 
 def generate_travel_plan(facility_name, origin_district):
     current_time_str = "Tuesday, June 16, 2026, 10:15 AM" # Morning commute context
@@ -360,6 +362,7 @@ with col_left:
                     st.session_state.mapped_facilities = sorted(facilities_df['facility_name'].dropna().unique().tolist())
                     st.session_state.selected_district_name = selected_district
                     st.session_state.travel_plan_data = None
+                    st.session_state.planner_response = None
                     import plotly.express as px
                     
                     # Size markers by trust score and color-code them based on the trust score (high score = green, low = red)
@@ -388,6 +391,7 @@ with col_left:
                     st.session_state.district_plot = None
                     st.session_state.mapped_facilities = []
                     st.session_state.travel_plan_data = None
+                    st.session_state.planner_response = None
                     
         # Render the map
         if st.session_state.district_plot is not None:
@@ -520,15 +524,7 @@ with col_right:
     if st.session_state.get("trigger_planner", False):
         st.session_state.trigger_planner = False
         if last_assistant_msg:
-            # Add user dummy prompt to history
-            planner_prompt = "Plan my visit based on the above care gap analysis."
-            st.session_state.messages.append({"role": "user", "content": planner_prompt})
-            
             with chat_container:
-                # Display the user dummy message first
-                with st.chat_message("user"):
-                    st.markdown(planner_prompt)
-                
                 # Show assistant streaming response for planner
                 with st.chat_message("assistant"):
                     status_placeholder = st.empty()
@@ -586,13 +582,12 @@ with col_right:
                         status_placeholder.empty()
                         response_placeholder.markdown(accumulated_text)
                         
-                        # Add final plan to history
-                        st.session_state.messages.append({"role": "assistant", "content": accumulated_text})
+                        # Save the planner response outside the chat history
+                        st.session_state.planner_response = accumulated_text
                         
                     except Exception as e:
                         error_msg = f"⚠️ Error communicating with Planner agent: {str(e)}"
-                        response_placeholder.markdown(error_msg)
-                        st.session_state.messages.append({"role": "assistant", "content": error_msg})
+                        st.session_state.planner_response = error_msg
                         
             st.rerun()
 
@@ -604,9 +599,10 @@ with col_right:
                 st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
         
-        # Reset visual state on new prompt
+        # Reset visual and planner state on new prompt
         st.session_state.current_plot_code = None
         st.session_state.should_plot = False
+        st.session_state.planner_response = None
         
         # Call Databricks Supervisor Agent Endpoint with streaming
         with chat_container:
@@ -750,3 +746,9 @@ with col_right:
         # Trigger page rerun to render the visualize button immediately below the chat input box
         st.session_state.messages.append({"role": "assistant", "content": accumulated_text})
         st.rerun()
+
+    # Render Planner response below the chatbot / input section in the right column
+    if st.session_state.get("planner_response"):
+        st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
+        with st.expander("📅 Generated Outreach & Visit Plan", expanded=True):
+            st.markdown(st.session_state.planner_response)
