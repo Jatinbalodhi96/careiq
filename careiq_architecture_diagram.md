@@ -30,15 +30,8 @@ flowchart LR
         genie_news["Genie News"]
     end
 
-    %% Connections: Lakehouse Tables to Genie Agents
-    nhfs5 --> genie_anemia
-    nhfs5 --> genie_heart
-    nhfs5 --> genie_oncology
-    nhfs5 --> genie_pulmonology
-    nhfs5 --> genie_diarrhoea
-    nhfs5 --> genie_immunization
-    facilities --> genie_news
-    pincodes --> genie_news
+    %% Connections: Lakehouse to Genie Agents
+    Lakehouse --> Genie
 
     %% 3. Agent Bricks Orchestrator Agent
     orchestrator["Agent Bricks Orchestrator Agent"]
