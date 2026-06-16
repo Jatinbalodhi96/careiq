@@ -38,6 +38,8 @@ if "selected_district_name" not in st.session_state:
     st.session_state.selected_district_name = "Ghaziabad"
 if "travel_plan_data" not in st.session_state:
     st.session_state.travel_plan_data = None
+if "trigger_planner" not in st.session_state:
+    st.session_state.trigger_planner = False
 
 def generate_travel_plan(facility_name, origin_district):
     current_time_str = "Tuesday, June 16, 2026, 10:15 AM" # Morning commute context
@@ -485,10 +487,113 @@ with col_right:
             with st.chat_message(msg["role"]):
                 st.markdown(msg["content"])
 
-    # If a plot is available and not yet displayed, show the visualization button
-    if st.session_state.current_plot_code and not st.session_state.should_plot:
+    # Render action buttons below chat
+    last_assistant_msg = None
+    for msg in reversed(st.session_state.messages):
+        if msg["role"] == "assistant" and not msg["content"].startswith("Hello! I am the Care Gap"):
+            last_assistant_msg = msg["content"]
+            break
+
+    show_viz = bool(st.session_state.current_plot_code and not st.session_state.should_plot)
+    show_plan = bool(last_assistant_msg)
+
+    if show_viz and show_plan:
+        c1, c2 = st.columns(2)
+        with c1:
+            if st.button("📈 Visualize Data", use_container_width=True):
+                st.session_state.should_plot = True
+                st.rerun()
+        with c2:
+            if st.button("📅 Plan My Visit", use_container_width=True):
+                st.session_state.trigger_planner = True
+                st.rerun()
+    elif show_viz:
         if st.button("📈 Visualize Data", use_container_width=True):
             st.session_state.should_plot = True
+            st.rerun()
+    elif show_plan:
+        if st.button("📅 Plan My Visit", use_container_width=True):
+            st.session_state.trigger_planner = True
+            st.rerun()
+
+    # Check if we should trigger the planner agent
+    if st.session_state.get("trigger_planner", False):
+        st.session_state.trigger_planner = False
+        if last_assistant_msg:
+            # Add user dummy prompt to history
+            planner_prompt = "Plan my visit based on the above care gap analysis."
+            st.session_state.messages.append({"role": "user", "content": planner_prompt})
+            
+            with chat_container:
+                # Display the user dummy message first
+                with st.chat_message("user"):
+                    st.markdown(planner_prompt)
+                
+                # Show assistant streaming response for planner
+                with st.chat_message("assistant"):
+                    status_placeholder = st.empty()
+                    response_placeholder = st.empty()
+                    
+                    thinking_steps = ["<div class='agent-step'>📅 <i>Consulting Agent Bricks Planner Agent (mas-d0f4e139-endpoint)...</i></div>"]
+                    status_placeholder.markdown("\n".join(thinking_steps), unsafe_allow_html=True)
+                    
+                    try:
+                        # Call the planner serving endpoint with stream=True
+                        response_stream = openai_client.responses.create(
+                            model="mas-d0f4e139-endpoint",
+                            input=[
+                                {"role": "system", "content": "You are the Agent Bricks Planner Agent. Create a concrete action plan and schedule for visiting patients or clinics based on the care gap analysis provided. Use clear pointer lists, highlight route optimization, and coordinate actions to address the gaps."},
+                                {"role": "user", "content": f"Please plan my visit based on this care gap analysis:\n\n{last_assistant_msg}"}
+                            ],
+                            stream=True
+                        )
+                        
+                        accumulated_text = ""
+                        current_item_id = None
+                        for chunk in response_stream:
+                            chunk_type = getattr(chunk, "type", "Unknown")
+                            
+                            # 1. Handle text token delta
+                            if chunk_type == "response.output_text.delta":
+                                delta = getattr(chunk, "delta", "")
+                                item_id = getattr(chunk, "item_id", None)
+                                
+                                if item_id and current_item_id and item_id != current_item_id:
+                                    if not accumulated_text.endswith("\n"):
+                                        accumulated_text += "\n\n"
+                                    elif not accumulated_text.endswith("\n\n"):
+                                        accumulated_text += "\n"
+                                
+                                if item_id:
+                                    current_item_id = item_id
+                                    
+                                accumulated_text += delta
+                                response_placeholder.markdown(accumulated_text)
+                                
+                            # 2. Handle intermediate done items (Tool Calls etc.)
+                            elif chunk_type == "response.output_item.done":
+                                item = getattr(chunk, "item", None)
+                                if item:
+                                    item_type = getattr(item, "type", "")
+                                    if item_type == "function_call":
+                                        tool_name = getattr(item, "name", "Google Maps/Search Tool")
+                                        args_str = getattr(item, "arguments", "{}")
+                                        step_msg = f"<div class='agent-step'>🛠️ <b>Planner Tool Call:</b> `{tool_name}`: <i>{args_str}</i></div>"
+                                        thinking_steps.append(step_msg)
+                                        status_placeholder.markdown("\n".join(thinking_steps), unsafe_allow_html=True)
+                                        
+                        # Clear thinking steps and show final plan
+                        status_placeholder.empty()
+                        response_placeholder.markdown(accumulated_text)
+                        
+                        # Add final plan to history
+                        st.session_state.messages.append({"role": "assistant", "content": accumulated_text})
+                        
+                    except Exception as e:
+                        error_msg = f"⚠️ Error communicating with Planner agent: {str(e)}"
+                        response_placeholder.markdown(error_msg)
+                        st.session_state.messages.append({"role": "assistant", "content": error_msg})
+                        
             st.rerun()
 
     # Chat input
