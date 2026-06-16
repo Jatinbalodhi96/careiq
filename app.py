@@ -538,7 +538,7 @@ with col_right:
                         response_stream = openai_client.responses.create(
                             model="mas-d0f4e139-endpoint",
                             input=[
-                                {"role": "system", "content": "You are the Agent Bricks Planner Agent. Create a concrete action plan and schedule for visiting patients or clinics based on the care gap analysis provided. Use clear pointer lists, highlight route optimization, and coordinate actions to address the gaps."},
+                                {"role": "system", "content": "You are the Agent Bricks Planner Agent. Create a concrete action plan and schedule for visiting patients or clinics based on the care gap analysis provided. Your output must summarize the data as text in clean bullet points, compare facility or route options, and explicitly pick/recommend the single best option with a clear justification."},
                                 {"role": "user", "content": f"Please plan my visit based on this care gap analysis:\n\n{last_assistant_msg}"}
                             ],
                             stream=True
