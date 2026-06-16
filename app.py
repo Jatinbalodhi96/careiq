@@ -296,7 +296,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # App Title & Header
-st.title("🏥 HealthGPT Care Gap Trust Planner v2")
+st.title("🧠 CareIQ — AI-Powered Care Gap Intelligence")
+
 st.markdown("<div style='margin-bottom: 10px;'></div>", unsafe_allow_html=True)
 
 # Main Split Columns: 60% Left for Visuals, 40% Right for Chat
