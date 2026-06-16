@@ -16,7 +16,8 @@ st.set_page_config(
 # Simple env var resolution — works both locally and on Databricks Apps.
 DATABRICKS_HOST      = os.environ.get("DATABRICKS_HOST", "dbc-d9de43da-bb2e.cloud.databricks.com")
 DATABRICKS_HTTP_PATH = os.environ.get("DATABRICKS_HTTP_PATH", "/sql/1.0/warehouses/ce1f9f3ece6a0c69")
-DATABRICKS_TOKEN     = os.environ.get("DATABRICKS_TOKEN", "REDACTED_TOKEN")
+DATABRICKS_TOKEN     = os.environ.get("DATABRICKS_TOKEN", "")  # Set via env var or Databricks Apps runtime
+
 
 # Initialize Databricks OpenAI client for supervisor agent
 openai_client = OpenAI(
