@@ -22,10 +22,34 @@ CareIQ solves the operational mismatch in public health systems where epidemiolo
 
 ## 🧩 The Analogy: A Mismatched Marketplace
 
-* **The Demand**: Regional health deficits (high disease rates, unvaccinated infants) represent localized public health demand.
+* **The Demand**: Regional health deficits (high disease rates, unvaccinated infants, hypertensive populations) represent localized public health demand.
 * **The Supply**: Nearby hospitals, clinic inventories, and mobile medical personnel represent the supply of care.
 * **The Problem**: Today, this marketplace is highly uncoordinated. Demand surges in remote districts, but supply registries sit in administrative silos. Field teams (our supply channels) are dispatched blindly, often arriving at under-equipped clinics or getting blocked by local transit hazards.
 * **The Solution**: **CareIQ acts as the AI Market Optimizer**—it instantly matches localized care demand with verified clinical supply, while planning the transit logistics to deliver that supply safely under real-world conditions.
+
+### 💓 Example of Cardiovascular Disease Demand vs. Supply
+In the context of Cardiovascular Disease (CVD), the market variables are defined as:
+* **Demand Parameters**: 
+  * **Hypertension Prevalence**: The percentage of the district population with high blood pressure (systolic ≥ 140 mmHg / diastolic ≥ 90 mmHg) from NFHS-5 health indicator surveys.
+  * **Acute Event Risks**: Local pockets of high blood sugar/diabetes (which compound cardiovascular risks) and historically high rates of hypertensive emergencies.
+* **Supply Measures**:
+  * **Clinical Equipment**: The count of clinics verified with working ECGs and digital blood pressure monitors.
+  * **Specialist Access**: Availability of visiting cardiologists or clinical outreach teams.
+  * **Pharmaceutical Supply**: On-site inventory levels of anti-hypertensive drugs (e.g., Amlodipine, Telmisartan).
+
+---
+
+## 📊 Cross-Disease Demand-Supply Matrix
+
+CareIQ maps and reconciles these parameters across various healthcare disciplines:
+
+| Disease Area | Demand Parameters (Needs / Gaps) | Supply Measures (Resources / Solutions) |
+| :--- | :--- | :--- |
+| **Cardiovascular Disease** | • High blood pressure prevalence (%)<br>• Hypertensive crisis admission rates<br>• Age-standardized cardiac mortality | • Cardiologist availability<br>• Trust-rated ECG/BP monitoring clinics<br>• Stock levels of anti-hypertensive drugs |
+| **Anemia & Blood Health** | • Anaemic women/children rate (%)<br>• Severe nutritional iron deficit count<br>• Low hemoglobin screening metrics | • Certified hematology labs<br>• Iron & folic acid supplement inventory<br>• Clinical nutrition counseling centers |
+| **Diabetes / Sugar Control** | • High blood sugar prevalence (%)<br>• Undiagnosed diabetic risk counts<br>• Chronic vascular health complications | • Endocrinologists & diagnostic labs<br>• Metformin/Insulin supply levels<br>• Trust-rated glycemic screening centers |
+| **Oncology & Screenings** | • High-risk cervical/breast cancer flags<br>• Late-stage detection percentages<br>• Screening gaps among target age groups | • Mammogram & pap smear facilities<br>• Cancer screening clinics & oncologists<br>• Chemotherapy/radiology referral networks |
+| **Pediatric Immunization** | • Unvaccinated/partially vaccinated count<br>• Childhood diarrhea/pulmonary risks<br>• High infant mortality pockets | • Pediatric clinic count & child trust index<br>• Mobile cold-chain vaccine trucks<br>• Community immunization health camps |
 
 ---
 
